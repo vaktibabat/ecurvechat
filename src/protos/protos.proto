@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+// The parameters of an EC of the form y^2 = x^3 + ax + b over Z_p, where p is a prime.
+// This message also contains the order n of the curve (i.e. # points on the curve)
+// along w/the coordinates (x, y) of the generator G
+// We also piggyback the client's public key coordinates on this message
+message CurveParameters {
+  bytes a = 1;
+  bytes b = 2;
+  bytes p = 3;
+  bytes x = 4;
+  bytes y = 5;
+  bytes order = 6;
+  bytes pub_x = 7;
+  bytes pub_y = 8;
+}
+
+// This message is sent in response to a CurveParameters message
+// and contains the public key of the receiving side
+message CurveParametersResponse {
+  bytes pub_x = 1;
+  bytes pub_y = 2;
+}
+
+// Ask the TTP for its pubkey, which can be used to verify certs
+// In the real world (most notably TLS), devices just store the pubkeys
+// of CAs locally, but I didn't want to hardcode the TTP's keypair
+// in the TTP module
+message GetTtpPubkey {
+
+}
+
+// The client sends this to the server (and vice versa)
+// to indicate whether the certificate of the other side is valid or not
+// if the cert is not valid, both sides call off the handshake, 
+// since they can't be sure who they're talking to on the other side
+message ValidationResponse {
+  bool is_valid = 1;
+}
+
+// Before continuing the handshake, the user is asked
+// whether they want to continue the handshake
+// in case not, both sides abort the handshake
+message AbortHandshake {
+  bool is_abort = 1;
+}
+
+// Ask the TTP to sign your public key (the info in CurveParameters)
+// along with some identifying information, such as Name and Organization
+message TtpGetSignature {
+  CurveParameters pub_key = 1;
+  string name = 2;
+  string org = 3;
+}
+
+// The response of the TTP WRT a request to get a cert
+// The TTP can either accept it (in which case this message also contains the signature)
+// or not
+message TtpSignResponse {
+  bool signed = 1;
+  // ECDSA Signature 
+  optional bytes r = 2;
+  optional bytes s = 3;
+}
+
+// Shut down the connection with the TTP
+message TtpBye {
+  
+}
+
+// Show the other peer our certificate
+message ShowCertificate {
+  // The cert
+  TtpGetSignature cert = 1;
+  // The TTP's signature
+  bytes r = 2;
+  bytes s = 3;
+}
+
+// An encrypted chat message
+message ChatMessage {
+  // AES-CTR random nonce that this message
+  // is encrypted under
+  bytes nonce = 1;
+  // The MAC (message authentication code) for this message
+  // The underlying algorithm we use is HMAC-SHA-256
+  bytes mac = 2;
+  // The ciphertext 
+  bytes ciphertext = 3;
+}
