@@ -91,7 +91,18 @@ fn check_state_full(state: &State) -> bool {
 }
 
 fn help() {
-    println!("Help...");
+    println!("set - Change the state of the chat. Variables are shown below.");
+    println!("set address <IPv4 Address> - set the address of the server");
+    println!("set port <port> - set the port of the server");
+    println!("set ttp_addr <IPv4 Address> - set the address of the CA");
+    println!("set ttp_port <port> - set the port of the CA");
+    println!("set name <your name> - configure the name shown on your certificate");
+    println!("set org <organization> - configure the organization shown on your certificate");
+    println!("listen - start a server");
+    println!("connect - connect to a server");
+    println!("send <message> - send an encrypted message");
+    println!("exit - exit");
+    println!("help - show this help message");
 }
 
 fn set(args: Vec<String>, state: &mut State) {
