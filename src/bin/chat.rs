@@ -21,7 +21,6 @@ pub enum CommandType {
     Send,
     Help,
     Exit,
-    ShowSharedSecret,
     Unk,
 }
 
@@ -251,7 +250,6 @@ impl Command {
             "send" => Ok(CommandType::Send),
             "help" => Ok(CommandType::Help),
             "exit" => Ok(CommandType::Exit),
-            "secret" => Ok(CommandType::ShowSharedSecret),
             unk => Err(unk),
         };
 
